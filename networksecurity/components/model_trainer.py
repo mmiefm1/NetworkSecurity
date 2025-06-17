@@ -24,6 +24,7 @@ from sklearn.ensemble import (
     RandomForestClassifier,
 )
 import mlflow
+from urllib.parse import urlparse
 
 import dagshub
 dagshub.init(repo_owner='mmiefm1', repo_name='NetworkSecurity', mlflow=True)
@@ -43,16 +44,16 @@ class ModelTrainer:
         # mlflow.set_registry_uri("https://dagshub.com/mmiefm1/NetworkSecurity")
         # tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
         with mlflow.start_run():
+            
             f1_score=classificationmetric.f1_score
             precision_score=classificationmetric.precision_score
             recall_score=classificationmetric.recall_score
 
             
-
             mlflow.log_metric("f1_score",f1_score)
             mlflow.log_metric("precision",precision_score)
             mlflow.log_metric("recall_score",recall_score)
-            mlflow.sklearn.log_model(best_model,"model")
+
             # Model registry does not work with file store
             # if tracking_url_type_store != "file":
 
@@ -88,8 +89,8 @@ class ModelTrainer:
             },
             "Gradient Boosting":{
                 # 'loss':['log_loss', 'exponential'],
-                'learning_rate':[.1,.01,.05,.001],
-                'subsample':[0.6,0.7,0.75,0.85,0.9],
+                # 'learning_rate':[.1,.01,.05,.001],
+                # 'subsample':[0.6,0.7,0.75,0.85,0.9],
                 # 'criterion':['squared_error', 'friedman_mse'],
                 # 'max_features':['auto','sqrt','log2'],
                 'n_estimators': [8,16,32,64,128,256]
@@ -144,13 +145,6 @@ class ModelTrainer:
                              )
         logging.info(f"Model trainer artifact: {model_trainer_artifact}")
         return model_trainer_artifact
-
-
-        
-
-
-       
-    
     
         
     def initiate_model_trainer(self)->ModelTrainerArtifact:
